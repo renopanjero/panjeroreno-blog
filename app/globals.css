@@ -3,25 +3,55 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FEF9F2;
+  --foreground: #0C0C0C;
+  --font-cyberpunk-waifus: 'Cyberpunk Waifus', 'Anonymous Pro', 'Roboto Mono';
+  --transition-duration: 0.3s;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+
+.dark {
+  --background: #000000;
+  --foreground: #F9F7F7;
+  --font-cyberpunk-waifus: 'Cyberpunk Waifus', 'Anonymous Pro', 'Roboto Mono';
 }
+
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-cyberpunk-waifus);
+  transition: background-color var(--transition-duration),
+    color var(--transition-duration),
+    opacity var(--transition-duration);
+  opacity: 1;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+  .nav-link {
+    position: relative;
+    display: inline-block;
+    color: currentColor;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+  }
+
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+
 }

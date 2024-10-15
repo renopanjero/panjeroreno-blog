@@ -8,9 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "300px",
+        xs1: "420px",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        navdark: "#030637",
+        navlight: "#E4E0E1",
       },
     },
   },
