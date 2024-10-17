@@ -1,109 +1,96 @@
-"use client";
+'use client';
 
-import useTheme from "@/hooks/use-theme";
-import Image from "next/image";
-import React, { useState } from "react";
-import { LineMdSunnyOutlineToMoonAltLoopTransition } from "../material/ToggleIcon";
-import { LineMdMoonAltToSunnyOutlineLoopTransition } from "../material/ToggleIcon2";
-import { Icon } from "@iconify/react/dist/iconify.cjs";
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { LineMdSunnyOutlineToMoonAltLoopTransition } from '../material/ToggleIcon';
+import { LineMdMoonAltToSunnyOutlineLoopTransition } from '../material/ToggleIcon2';
+import { Icon } from '@iconify/react/dist/iconify.cjs';
+import { useDrag } from '@use-gesture/react';
+import { useSpring, animated } from '@react-spring/web';
 
-const HeaderNav = () => {
-  const { isLightTheme, toggleTheme } = useTheme();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+interface IHeader {
+  isLightTheme: boolean;
+  toggleTheme: () => void;
+}
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+const HeaderNav: React.FC<IHeader> = ({ isLightTheme, toggleTheme }) => {
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [clickSound, setClickSound] = useState<HTMLAudioElement | null>(null);
+
+  const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
+
+  const bind = useDrag(
+    (state) => {
+      api.start({ x: state.offset[0], y: state.offset[1] });
+    },
+    {
+      bounds: { left: 0, top: 0, right: 0, bottom: 350 }, // Set bounds like react-draggable
+    }
+  );
+
+  useEffect(() => {
+    const newAudio = new Audio('/music/rose.mp3');
+    newAudio.loop = true;
+    setAudio(newAudio);
+
+    const clickSoundEffect = new Audio('/music/click.mp3');
+    setClickSound(clickSoundEffect);
+
+    const handleEnded = () => {
+      newAudio.currentTime = 0;
+      newAudio.play();
+    };
+
+    newAudio.addEventListener('ended', handleEnded);
+
+    return () => {
+      newAudio.removeEventListener('ended', handleEnded);
+      newAudio.pause();
+      newAudio.currentTime = 0;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (audio) {
+      if (isSpinning) {
+        audio.play();
+      } else {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    }
+  }, [isSpinning, audio]);
+
+  const toggleMusicSpin = () => {
+    if (clickSound) {
+      clickSound.play(); // Play suara klik saat ikon ditekan
+    }
+    setIsSpinning((prev) => !prev);
   };
 
   return (
-    <div className="flex flex-col items-center m-5">
-      <div>
-        <div className="relative">
-          <Image
-            id="Header"
-            draggable="false"
-            src={isLightTheme ? "/image3.png" : "/image4.png"}
-            alt={isLightTheme ? "headerlight" : "headerdark"}
-            width={1000}
-            height={400}
-            className={`rounded-sm h-auto mb-1 md:mb-2 border-2 pointer-events-none ${
-              isLightTheme ? "border-black" : "border-gray-200"
-            }`}
-          />
-          <div className="absolute top-0 left-0 w-full h-full"></div>
-        </div>
-
-        <nav
-          className={`${
-            isLightTheme ? "border-black" : "border-white"
-          } hidden sm:flex flex-row border-b-2 md:border-b-4 pb-1 md:pb-4 space-x-0 sm:space-x-4 justify-center text-center w-full`}
-        >
-          <ul className="flex flex-col sm:flex-row gap-2 sm:gap-12 md:gap-16 text-lg md:text-2xl">
-            <li>
-              <a className="nav-link" href="#home">
-                Home
-              </a>
-            </li>
-            <li>
-              <a className="nav-link" href="#home">
-                Blog
-              </a>
-            </li>
-            <li>
-              <a className="nav-link" href="#home">
-                Progress-Reports
-              </a>
-            </li>
-            <li>
-              <a className="nav-link" href="#home">
-                About
-              </a>
-            </li>
-            <li>
-              <button onClick={toggleTheme} className="focus:outline-none">
-                {isLightTheme ? (
-                  <LineMdMoonAltToSunnyOutlineLoopTransition />
-                ) : (
-                  <LineMdSunnyOutlineToMoonAltLoopTransition />
-                )}
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div className="flex">
-        <div
-          id="sidebarButton"
-          className={`fixed left-0 top-[40%] w-auto h-auto mx-5 p-2 ${
-            isLightTheme
-              ? "bg-gray-100 border-black"
-              : "bg-gray-900 border-white"
-          } rounded-md border sm:hidden`}
-        >
-          <div className="flex flex-col gap-2">
-            <button onClick={toggleSidebar} className="focus:outline-none">
-              <Icon
-                icon="cil:hamburger-menu"
-                width="1.7rem"
-                height="1.7rem"
-                style={{ color: isLightTheme ? "black" : "white" }}
-              />
-            </button>
-            <button onClick={toggleTheme} className="focus:outline-none">
-              {isLightTheme ? (
-                <LineMdMoonAltToSunnyOutlineLoopTransition />
-              ) : (
-                <LineMdSunnyOutlineToMoonAltLoopTransition />
-              )}
-            </button>
+    <div>
+      <div className="items-center mx-5 mt-5">
+        <div>
+          <div className="relative">
+            <Image
+              priority
+              id="Header"
+              draggable="false"
+              src={isLightTheme ? '/image3.png' : '/image4.png'}
+              alt={isLightTheme ? 'headerlight' : 'headerdark'}
+              width={1000}
+              height={400}
+              className={`rounded-sm h-auto mb-1 md:mb-2 border pointer-events-none`}
+            />
+            <div className="absolute top-0 left-0 w-full h-full"></div>
           </div>
-          <div
-            id="sidebarMenu"
-            className={`fixed top-50 left-0 w-auto h-auto mx-5 transform transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+
+          <nav
+            className={`border-b-2 md:border-b-2 pb-1 md:pb-2 space-x-5 gap-10 justify-center text-center items-center flex ${isLightTheme ? 'border-black' : 'border-white'}`}
           >
-            <ul className="flex flex-col space-y-2 text-lg">
+            <ul className="flex text-center justify-center items-center gap-4 xs:gap-4 xs1:gap-8 xs2:gap-16 sm:gap-12 md:gap-10 text-xs xs:text-sm xs1:text-lg sm:text-xl">
               <li>
                 <a className="nav-link" href="#home">
                   Home
@@ -125,7 +112,50 @@ const HeaderNav = () => {
                 </a>
               </li>
             </ul>
-          </div>
+            <div className="pt-1 hidden sm:flex gap-4">
+              <Icon
+                icon="ph:vinyl-record-bold"
+                onClick={toggleMusicSpin}
+                width="1.7rem"
+                height="1.7rem"
+                style={{ color: isLightTheme ? 'black' : 'white' }}
+                className={`focus:outline-none transform transition-transform duration-75 cursor-pointer active:scale-75 ${isSpinning ? 'animate-spin' : ''}`}
+              />
+              <button onClick={toggleTheme} className="focus:outline-none">
+                {isLightTheme ? (
+                  <LineMdMoonAltToSunnyOutlineLoopTransition />
+                ) : (
+                  <LineMdSunnyOutlineToMoonAltLoopTransition />
+                )}
+              </button>
+            </div>
+          </nav>
+        </div>
+        <div className="flex items-end justify-end sm:hidden">
+          {/* Draggable button */}
+          <animated.div
+            {...bind()}
+            style={{ x, y }}
+            className={`flex flex-col space-y-2 z-50 top-44 xs2:top-56 fixed p-2 cursor-grab touch-none ${isLightTheme ? 'bg-white border-black' : 'bg-black border-white'} rounded-sm border`}
+          >
+            <button onClick={toggleTheme} className="focus:outline-none">
+              {isLightTheme ? (
+                <LineMdMoonAltToSunnyOutlineLoopTransition />
+              ) : (
+                <LineMdSunnyOutlineToMoonAltLoopTransition />
+              )}
+            </button>
+            <button>
+              <Icon
+                icon="ph:vinyl-record-bold"
+                onClick={toggleMusicSpin}
+                width="1.7rem"
+                height="1.7rem"
+                style={{ color: isLightTheme ? 'black' : 'white' }}
+                className={`focus:outline-none transform transition-transform duration-75 active:scale-75 cursor-pointer ${isSpinning ? 'animate-spin' : ''}`}
+              />
+            </button>
+          </animated.div>
         </div>
       </div>
     </div>

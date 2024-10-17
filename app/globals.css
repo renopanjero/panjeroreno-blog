@@ -4,24 +4,23 @@
 
 :root {
   --background: #FEF9F2;
-  --foreground: #0C0C0C;
+  --foreground: #000000;
   --font-cyberpunk-waifus: 'Cyberpunk Waifus', 'Anonymous Pro', 'Roboto Mono';
   --transition-duration: 0.3s;
 }
 
-
 .dark {
   --background: #000000;
-  --foreground: #F9F7F7;
+  --foreground: #FEF9F2;
   --font-cyberpunk-waifus: 'Cyberpunk Waifus', 'Anonymous Pro', 'Roboto Mono';
 }
-
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-cyberpunk-waifus);
-  transition: background-color var(--transition-duration),
+  transition:
+    background-color var(--transition-duration),
     color var(--transition-duration),
     opacity var(--transition-duration);
   opacity: 1;
@@ -39,7 +38,7 @@ body {
   }
 
   .nav-link::after {
-    content: "";
+    content: '';
     position: absolute;
     left: 0;
     right: 0;
@@ -54,4 +53,31 @@ body {
     transform: scaleX(1);
   }
 
+  .nav-footer {
+    position: relative;
+    display: inline-block;
+    color: currentColor;
+    transition: color 0.3s ease, opacity 0.3s ease;
+  }
+
+  .nav-footer:hover {
+    color: var(--foreground);
+    opacity: 0.7;
+  }
+
+  .nav-footer::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    height: 2px;
+    width: 0;
+    background: currentColor;
+    transition: width 0.4s ease, left 0.4s ease;
+  }
+
+  .nav-footer:hover::after {
+    width: 100%;
+    left: 0;
+  }
 }

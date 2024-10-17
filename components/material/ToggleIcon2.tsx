@@ -1,5 +1,5 @@
-import React from "react";
-import type { SVGProps } from "react";
+import React from 'react';
+import type { SVGProps } from 'react';
 
 export function LineMdMoonAltToSunnyOutlineLoopTransition(
   props: SVGProps<SVGSVGElement>
@@ -11,6 +11,7 @@ export function LineMdMoonAltToSunnyOutlineLoopTransition(
       height="1.7rem"
       viewBox="0 0 24 24"
       {...props}
+      className=""
     >
       <g
         fill="none"

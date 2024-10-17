@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import './globals.css';
 
 const CyberpunkWaifus = localFont({
-  src: "/font/CyberpunkWaifus.ttf",
-  weight: "400, 700",
-  style: "normal",
-  variable: "--font-cyberpunk-waifus",
+  src: '/font/CyberpunkWaifus.ttf',
+  weight: '400, 700, 800',
+  style: 'normal',
+  variable: '--font-cyberpunk-waifus',
 });
 
 export const metadata: Metadata = {
-  title: "RenBlog",
-  description: "I want to share my story and my experience with others",
+  title: 'RenoPanjero',
+  description: 'I want to share my story and my experience with others',
 };
 
 export default function RootLayout({
